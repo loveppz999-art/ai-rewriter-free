@@ -11,7 +11,7 @@ export default async function handler(req) {
   const { prompt } = await req.json();
 
   const bodyData = {
-    model: "deepseek‑chat",
+    model: "deepseek-chat",
     messages: [
       {
         role: "user",
@@ -22,21 +22,22 @@ export default async function handler(req) {
   };
 
   try {
-    const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+    // 使用第三方反向代理，解决Vercel无法访问国内DeepSeek的问题
+    const res = await fetch("https://deepseek-proxy.vercel.app/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${API_KEY}`,
-        "Content‑Type": "application/json"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(bodyData),
-      signal: AbortSignal.timeout(25000) // 25秒超时限制，防止一直卡住
+      signal: AbortSignal.timeout(25000)
     });
 
     const data = await res.json();
     return new Response(JSON.stringify(data), { status: 200 });
   } catch (err) {
     return new Response(
-      JSON.stringify({ error: "API connect fail, Vercel cannot reach DeepSeek server" }),
+      JSON.stringify({ error: "Network error" }),
       { status: 500 }
     );
   }
