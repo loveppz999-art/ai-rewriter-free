@@ -36,17 +36,27 @@
       let text = document.getElementById("input").value;
       if(!text) return alert("Enter text");
       document.getElementById("result").innerText = "Processing...";
-      const res = await fetch("/api/proxy", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-          messages: [{role:"user",content:"Paraphrase this text: "+text}]
-        })
-      });
-      const data = await res.json();
-      let out = data.choices?.[0]?.message?.content || "Error";
-      document.getElementById("result").innerText = out;
-      count++;
+      try {
+        // 统一向后端传递 prompt 字段，和proxy.js保持对应
+        const res = await fetch("/api/proxy", {
+          method:"POST",
+          headers:{"Content‑Type":"application/json"},
+          body:JSON.stringify({
+            prompt: text
+          })
+        });
+        const data = await res.json();
+        if(data.error){
+          document.getElementById("result").innerText = "Error：" + data.error;
+        }else{
+          let out = data.choices?.[0]?.message?.content || "Error";
+          document.getElementById("result").innerText = out;
+          count++;
+        }
+      } catch (err) {
+        // 网络问题直接在页面输出报错，不再卡死
+        document.getElementById("result").innerText = "Network Fail：" + err.message;
+      }
     }
   </script>
 </body>
