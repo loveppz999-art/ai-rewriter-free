@@ -6,6 +6,12 @@ exports.handler = async (event) => {
   if (!API_KEY) {
     return { statusCode: 400, body: JSON.stringify({ error: "Missing API_KEY" }) };
   }
+
+  // 新增空值判断，解决The string did not match报错
+  if (!event.body || event.body.trim() === "") {
+    return { statusCode: 400, body: JSON.stringify({ error: "Empty request body" }) };
+  }
+
   try {
     const body = JSON.parse(event.body);
     const prompt = body.prompt;
