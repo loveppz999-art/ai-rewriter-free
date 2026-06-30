@@ -26,7 +26,7 @@ export default async function handler(req) {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${API_KEY}`,
-        "Content‑Type": "application/json"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(bodyData),
       signal: AbortSignal.timeout(25000)
