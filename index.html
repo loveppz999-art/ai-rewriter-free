@@ -33,14 +33,13 @@
         document.getElementById("result").innerText = "Daily limit reached. Contact me for unlimited.";
         return;
       }
-      let text = document.getElementById("input").value;
+      let text = document.getElementById("input").value.trim();
       if(!text) return alert("Enter text");
       document.getElementById("result").innerText = "Processing...";
       try {
-        // 统一向后端传递 prompt 字段，和proxy.js保持对应
         const res = await fetch("/api/proxy", {
           method:"POST",
-          headers:{"Content‑Type":"application/json"},
+          headers:{"Content-Type":"application/json"},
           body:JSON.stringify({
             prompt: text
           })
@@ -54,7 +53,6 @@
           count++;
         }
       } catch (err) {
-        // 网络问题直接在页面输出报错，不再卡死
         document.getElementById("result").innerText = "Network Fail：" + err.message;
       }
     }
